@@ -2,7 +2,7 @@
     
     For the use of Grid consult Grid.js
 */
-var categoryIndex = 0;
+    var categoryIndex = 0;
     var videoIndex = 0;
     var Slide = 110;
     var TranDis = 257;
@@ -13,7 +13,7 @@ var categoryIndex = 0;
     var boxInView = 6;
     var boxWidth = 250;
     var boxHeight = 135;
-var Data;
+    var Data;
 $(document).ready( function(){
 	getData();
     
@@ -28,10 +28,13 @@ function getData(){
 
     $("#leftBtn").click(function(){
         console.log("left button clicked");
+        moveRowLeft(categoryIndex, true);
     });
     $("#rightBtn").click(function(){
         console.log("right button clicked");
+        moveRowRight(categoryIndex, true);
     });
+    
 }
 
 
@@ -146,31 +149,47 @@ SceneManager.main = (function () {
         }
         if(Data.list.length > 0 ){
             createRow( "layCont", 0);
-            moveRowLeft( 0 , false);
+            moveRowRight( 0 , false);
             if(Data.list.length > 1){
                 createRow("layCont",  1);
-                moveRowLeft( 1 , false);
+                moveRowRight( 1 , false);
             }
             
         }else{
-            moveRowLeft( 0 , true);
+            //moveRowRight( 0 , true);
         }
     }
     
-    function moveRowLeft(index, animation){
+    function moveRowRight(index, animation){
+        var movePixels;
         if(animation){
-            
+            movePixels = "-=" + boxWidth + "px";
             $("#row"+index).animate({
-                left: "-=150px"
+                left: movePixels 
             },1000,function(){
                 console.log("Aniation has finished");
             });
         }else{
-            var movePixels = -boxWidth * (rowArray[index].vidIndex + 1);
+            movePixels = -boxWidth * (rowArray[index].vidIndex + 1);
             $("#row"+index).css("left", movePixels+"px");
         }
     }
     
+
+    function moveRowLeft(index, animation){
+        var movePixels;
+        if(animation){
+            movePixels = "+=" + boxWidth + "px";
+            $("#row"+index).animate({
+                left: movePixels 
+            },1000,function(){
+                console.log("Aniation has finished");
+            });
+        }else{
+            movePixels = boxWidth * (rowArray[index].vidIndex + 1);
+            $("#row"+index).css("left", movePixels+"px");
+        }
+    }
     
     function createRow(container, index ){
         var category = Data.list[index];

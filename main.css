@@ -1,0 +1,76 @@
+body{
+    width: 960px;
+    height: 540px;
+}
+.mainSceneCont{
+    width: 960px;
+    height: 540px;
+}
+
+.selectedBackground{
+    background-size: cover!important;
+    background-position: 50%;
+    z-index: -50;
+}
+
+
+
+.videoContentCont{
+    width: 90%;
+    height: 80%;
+    background-color: beige;
+    position: relative;
+    top: 15%;
+    left: 5%;
+    overflow: hidden;
+}
+
+.row{
+    width: 100%;
+    height: 50%;
+    background-color: dimgray;
+    overflow: hidden;
+}
+
+.rowHeader{
+    width: 100%;
+    height: 30%;
+    background-color: sandybrown;
+}
+.rowScrollCont{
+    width: 250%;
+    height: 100%;
+    position: relative;
+}
+.rowContentCont{
+    width: 250px;
+    height: 135px;
+    background-color:cadetblue;
+    border: 1px solid black;
+    float: left;
+    position: relative;
+}
+
+.vidBox{
+    width: 200px;
+    height: 125px;
+    background-color: aquamarine;
+}
+
+.vidImage{
+    width: 100%;
+    height: 50%;
+    background-color:white;
+}
+
+.vidInfoCont{
+    width: 100%;
+    height: 50%;
+}
+
+.vidName{
+    font-size: 0.8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

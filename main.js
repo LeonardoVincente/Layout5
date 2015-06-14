@@ -11,7 +11,7 @@
     //var catIndex = 0;// this is the category with the video to be played
     //var vidIndex = 0; // this is the video to be played
     var boxInView = 6;
-    var boxWidth = 250;
+    var boxWidth = 252;
     var boxHeight = 135;
     var Data;
 $(document).ready( function(){
@@ -28,13 +28,24 @@ function getData(){
 
     $("#leftBtn").click(function(){
         console.log("left button clicked");
-        moveRowLeft(categoryIndex, true);
+        if(checkifValidSide(categoryIndex, videoIndex ,"left")){
+            moveRowLeft(categoryIndex, true);
+        }
     });
     $("#rightBtn").click(function(){
         console.log("right button clicked");
-        moveRowRight(categoryIndex, true);
+        if(checkifValidSide(categoryIndex, videoIndex ,"right")){
+            moveRowRight(categoryIndex, true);
+        }
     });
-    
+    $("#upBtn").click(function(){
+        console.log("move up clicked");
+        moveRowUp(categoryIndex, true);
+    });
+    $("#downBtn").click(function(){
+        console.log("Move down clicked");
+        moveRowDown(categoryIndex, true);
+    });
 }
 
 
@@ -144,7 +155,8 @@ SceneManager.main = (function () {
         for( var i =0 ; i < Data.list.length; i++){
             var color = getColor(i);
             var title = Data.list[i].name ;
-            var newRow = rowClass(title, color, 0, i, Data.list.length);
+            console.log("inserting lengt to "+ title +" len "+ Data.list[i].videos.length);
+            var newRow = new rowClass(title, color, 0, i, Data.list[i].videos.length);
             rowArray.push(newRow);
         }
         if(Data.list.length > 0 ){
@@ -160,6 +172,24 @@ SceneManager.main = (function () {
         }
     }
     
+    function checkifValidSide(catIndex, vidIndex, dir){
+       console.log("viddeo index " + videoIndex + " catIndex " + catIndex + " rowLength "+ rowArray[catIndex].length);
+        if(dir=="left"){
+            if(vidIndex - 1 >= 0){
+                videoIndex--;
+                return true;
+            }
+        }
+        if(dir=="right"){
+            if(vidIndex + 1 < rowArray[catIndex].length){
+                videoIndex++;
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     function moveRowRight(index, animation){
         var movePixels;
         if(animation){
@@ -190,6 +220,17 @@ SceneManager.main = (function () {
             $("#row"+index).css("left", movePixels+"px");
         }
     }
+    function moveRowUp(index, animation){
+        console.log("move up");
+        categoryIndex--;
+    }
+
+    function moveRowDown(index, animation){
+        console.log("move down ");
+        categoryIndex++;
+    }
+
+
     
     function createRow(container, index ){
         var category = Data.list[index];

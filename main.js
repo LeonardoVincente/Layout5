@@ -27,23 +27,19 @@ function getData(){
     });
 
     $("#leftBtn").click(function(){
-        console.log("left button clicked");
-        if(checkifValidSide(categoryIndex, videoIndex ,"left")){
+        if(checkifValidSide(categoryIndex ,"left")){
             moveRowLeft(categoryIndex, true);
         }
     });
     $("#rightBtn").click(function(){
-        console.log("right button clicked");
-        if(checkifValidSide(categoryIndex, videoIndex ,"right")){
+        if(checkifValidSide(categoryIndex ,"right")){
             moveRowRight(categoryIndex, true);
         }
     });
     $("#upBtn").click(function(){
-        console.log("move up clicked");
         moveRowUp(categoryIndex, true);
     });
     $("#downBtn").click(function(){
-        console.log("Move down clicked");
         moveRowDown(categoryIndex, true);
     });
 }
@@ -155,7 +151,6 @@ SceneManager.main = (function () {
         for( var i =0 ; i < Data.list.length; i++){
             var color = getColor(i);
             var title = Data.list[i].name ;
-            console.log("inserting lengt to "+ title +" len "+ Data.list[i].videos.length);
             var newRow = new rowClass(title, color, 0, i, Data.list[i].videos.length);
             rowArray.push(newRow);
         }
@@ -172,23 +167,56 @@ SceneManager.main = (function () {
         }
     }
     
-    function checkifValidSide(catIndex, vidIndex, dir){
-       console.log("viddeo index " + videoIndex + " catIndex " + catIndex + " rowLength "+ rowArray[catIndex].length);
+    function checkifValidSide(catIndex,  dir){
+        
         if(dir=="left"){
-            if(vidIndex - 1 >= 0){
-                videoIndex--;
+            console.log("Row index "+ rowArray[catIndex].vidIndex);
+            if(rowArray[catIndex].vidIndex -1 >= 0){
+                console.log("it passed the test");
+                rowArray[catIndex].vidIndex--;
+                console.log("After rowIndex "+ rowArray[catIndex].vidIndex);
                 return true;
             }
         }
         if(dir=="right"){
-            if(vidIndex + 1 < rowArray[catIndex].length){
-                videoIndex++;
+            if(rowArray[catIndex].vidIndex + 1 < rowArray[catIndex].length){
+                rowArray[catIndex].vidIndex++;
+                console.log("After rowIndex "+ rowArray[catIndex].vidIndex);
                 return true;
             }
         }
         return false;
     }
+    function checkIfCreateDestroy(iRow, dir){
+        if( rowArray[iRow].vidIndex + boxInView - 2   < rowArray[iRow].length && dir == "right" &&   rowArray[iRow].length > boxInView - 2    ){
+            return true;
+        }
+        if( dir == "left" ){
+            return true;
+        }
+        return false;
+    }
+    function createDestroy(idRow, dir){
+        if(dir=="left"){
+            var category = Data.list[idRow];
+            var iVid = rowArray[idRow].vidIndex -1;
+            if(iVid < 0){  
+                iVid  = rowArray[idRow].length-1;
+            }
+            var newBox = createVideoBox(category.videos[iVid], idRow);
+            $("#row"+idRow).prepend(newBox);
+            $("#row"+idRow+"> div:last-child").remove();          
+        }
 
+        if(dir=="right"){
+            $("#row"+idRow).find('div').first().remove();
+            var category = Data.list[idRow];
+            var iVid = rowArray[idRow].vidIndex;
+            var newBox = createVideoBox(category.videos[iVid], idRow);
+            $("#row"+idRow).append(newBox);
+        }
+
+    }
 
     function moveRowRight(index, animation){
         var movePixels;
@@ -197,7 +225,11 @@ SceneManager.main = (function () {
             $("#row"+index).animate({
                 left: movePixels 
             },1000,function(){
-                console.log("Aniation has finished");
+                movePixels = -boxWidth ;
+                if(checkIfCreateDestroy(categoryIndex,"right")){
+                    $("#row"+index).css("left", movePixels+"px");
+                    createDestroy(categoryIndex, "right");
+                }
             });
         }else{
             movePixels = -boxWidth * (rowArray[index].vidIndex + 1);
@@ -208,12 +240,17 @@ SceneManager.main = (function () {
 
     function moveRowLeft(index, animation){
         var movePixels;
+        console.log("moveleft")
         if(animation){
             movePixels = "+=" + boxWidth + "px";
             $("#row"+index).animate({
                 left: movePixels 
             },1000,function(){
-                console.log("Aniation has finished");
+                movePixels = -boxWidth ;
+                if(checkIfCreateDestroy(categoryIndex),"left"){
+                    $("#row"+index).css("left", movePixels+"px");
+                    createDestroy(categoryIndex, "left");
+                }
             });
         }else{
             movePixels = boxWidth * (rowArray[index].vidIndex + 1);
@@ -221,12 +258,10 @@ SceneManager.main = (function () {
         }
     }
     function moveRowUp(index, animation){
-        console.log("move up");
         categoryIndex--;
     }
 
     function moveRowDown(index, animation){
-        console.log("move down ");
         categoryIndex++;
     }
 
@@ -240,12 +275,12 @@ SceneManager.main = (function () {
         
         row.append(rowHeader);
         //create the first row. 
-        var videoBox = createVideoBox(category.videos[category.videos.length-1], i);
+        var videoBox = createVideoBox(category.videos[category.videos.length-1], index);
         rowScrollCont.append(videoBox);
         
         // create the rest
-        for(var i = 0 ; i < boxInView && i < category.videos.length ; i++){
-            var videoBox = createVideoBox(category.videos[i], i, index);
+        for(var i = 0 ; i < boxInView -1 && i < category.videos.length ; i++){
+            var videoBox = createVideoBox(category.videos[i], index);
             rowScrollCont.append(videoBox);
         }
 
@@ -253,14 +288,14 @@ SceneManager.main = (function () {
         $("#"+container).append(row);
     }
     
-    function createVideoBox(video, i, catIndex){
+    function createVideoBox(video, catIndex){
         var videoBoxCont = $("<div class='rowContentCont' />");
         var videoBox = $("<div class='vidBox' />");
         var vidImage = $("<div class='vidImage' />");
         var vidInfoCont = $("<div class='vidInfoCont' />");
         var vidName = $("<div class='vidName' />");
         
-        vidInfoCont.css("background-color", rowArray[0].color);
+        vidInfoCont.css("background-color", rowArray[catIndex].color);
         vidName.html(video.name);
         
         vidInfoCont.append(vidName);

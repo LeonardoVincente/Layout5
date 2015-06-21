@@ -196,8 +196,8 @@ SceneManager.main = (function () {
             if(Data.list.length > 1){
                 $("#rowCont").append(createRow(  1));
                 moveRowRight( 1 , false);
-                $("#rowCont").append(createRow(  2));
-                moveRowRight( 2 , false);
+/*                $("#rowCont").append(createRow(  2));
+                moveRowRight( 2 , false);*/
             }
         }else{
             console.log("There is no data in Data.list.length");

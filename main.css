@@ -1,10 +1,12 @@
 body{
     width: 960px;
     height: 540px;
+    
 }
 .mainSceneCont{
     width: 960px;
     height: 540px;
+    
 }
 
 .selectedBackground{
@@ -13,54 +15,71 @@ body{
     z-index: -50;
 }
 
-
-
 .videoContentCont{
-    width: 90%;
-    height: 80%;
-    background-color: beige;
+    width: 100%;
+    height: 95%;
+    background-color: none;
     position: relative;
-    top: 15%;
-    left: 5%;
+    top: 5%;
+    /*left: 5%;*/
     overflow: hidden;
+    
 }
+#rowCont{
+    overflow: hidden;
+    width: 100%;
+    height: 864px;
+    position: relative;
+}
+
 
 .row{
     width: 100%;
-    height: 50%;
-    background-color: dimgray;
+    height: 200px;
+    background-color: none;
     overflow: hidden;
 }
 
 .rowHeader{
     width: 100%;
     height: 30%;
-    background-color: sandybrown;
+    background-color: none;
+    display: table;
+
 }
 .rowScrollCont{
     width: 250%;
-    height: 100%;
+    height: 70%;
     position: relative;
+    background-color: none;
 }
 .rowContentCont{
-    width: 250px;
+    width: 270px;
     height: 135px;
-    background-color:cadetblue;
-    border: 1px solid black;
+    background-color:none;
     float: left;
+    position: relative;
+    margin-top: 2px;
+}
+
+#rowCont{
     position: relative;
 }
 
 .vidBox{
     width: 200px;
     height: 125px;
-    background-color: aquamarine;
+    background-color: gray;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3px;
 }
 
 .vidImage{
-    width: 100%;
-    height: 50%;
-    background-color:white;
+   
+    /*height: 120px;*/
+    width: 150px;
+    background-color:none;
 }
 
 .vidInfoCont{
@@ -73,4 +92,19 @@ body{
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-size: 1em;
+}
+
+
+.selectedVid > div{
+    border: solid 2px red;
+    margin-top: 2px;
+}
+
+.spanRowHead{
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 35px;
+    font-size: 1.4em;
+    color: white;
 }

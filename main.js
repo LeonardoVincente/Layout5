@@ -11,36 +11,70 @@
     //var catIndex = 0;// this is the category with the video to be played
     //var vidIndex = 0; // this is the video to be played
     var boxInView = 6;
-    var boxWidth = 252;
+    var boxWidth = 272;
     var boxHeight = 135;
     var Data;
-$(document).ready( function(){
-	getData();
+    var aniTIme = 100;
+    var timeBetweenClicks= aniTIme + 50;
+    var lasClick = 0;
+    var rowHeight = 216;
+    var someFlag = false;
     
+$(document).ready( function(){
+	getData();    
 });
+
+document.onkeydown = checkKey;
+function checkKey(e) {
+
+    e = e || window.event;
+
+    if (e.keyCode == '38') {
+        // up arrow
+        if(checkIfMoveCat(categoryIndex - 1 ,"up")){
+            moveRowUp(categoryIndex, true);
+            addSelectedTo(categoryIndex);
+        }
+        
+    }
+    else if (e.keyCode == '40') {
+        // down arrow
+        if(checkIfMoveCat(categoryIndex + 1 ,"down")){
+            moveRowDown(categoryIndex, true);
+            addSelectedTo(categoryIndex);
+        }
+    }
+    else if (e.keyCode == '37') {
+       // left arrow
+        var d = new Date();
+        if( d.getTime() - lasClick > timeBetweenClicks ){
+           lasClick = d.getTime();
+           if(checkifValidSide(categoryIndex ,"left")){
+                moveRowLeft(categoryIndex, true);
+                addSelectedTo(categoryIndex);
+            }
+        }
+    }
+    else if (e.keyCode == '39') {
+       // right arrow
+        var d = new Date();
+        if( d.getTime() - lasClick > timeBetweenClicks ){
+            lasClick = d.getTime();
+            if(checkifValidSide(categoryIndex ,"right")){
+                moveRowRight(categoryIndex, true);
+                addSelectedTo(categoryIndex);
+            }
+        }
+    }
+
+}
+
 
 function getData(){
     $.getJSON( "app_272.json", function( data ) {
         Data = data;
         initLayout();
         iniBackAndLogo();
-    });
-
-    $("#leftBtn").click(function(){
-        if(checkifValidSide(categoryIndex ,"left")){
-            moveRowLeft(categoryIndex, true);
-        }
-    });
-    $("#rightBtn").click(function(){
-        if(checkifValidSide(categoryIndex ,"right")){
-            moveRowRight(categoryIndex, true);
-        }
-    });
-    $("#upBtn").click(function(){
-        moveRowUp(categoryIndex, true);
-    });
-    $("#downBtn").click(function(){
-        moveRowDown(categoryIndex, true);
     });
 }
 
@@ -155,33 +189,46 @@ SceneManager.main = (function () {
             rowArray.push(newRow);
         }
         if(Data.list.length > 0 ){
-            createRow( "layCont", 0);
-            moveRowRight( 0 , false);
-            if(Data.list.length > 1){
-                createRow("layCont",  1);
-                moveRowRight( 1 , false);
-            }
             
+            $("#rowCont").append(createRow(  0));
+            moveRowRight( 0 , false);
+            addSelectedTo(categoryIndex);
+            if(Data.list.length > 1){
+                $("#rowCont").append(createRow(  1));
+                moveRowRight( 1 , false);
+                $("#rowCont").append(createRow(  2));
+                moveRowRight( 2 , false);
+            }
         }else{
-            //moveRowRight( 0 , true);
+            console.log("There is no data in Data.list.length");
         }
     }
-    
+
+function checkIfMoveCat(catInd ,dir){
+    if( dir =="up" && catInd >= 0 ){
+        return true;
+    }
+    if(dir=="down" && catInd < Data.list.length){
+        return true;
+    }
+    return false;
+}
+
     function checkifValidSide(catIndex,  dir){
         
         if(dir=="left"){
-            console.log("Row index "+ rowArray[catIndex].vidIndex);
+            
             if(rowArray[catIndex].vidIndex -1 >= 0){
-                console.log("it passed the test");
+                
                 rowArray[catIndex].vidIndex--;
-                console.log("After rowIndex "+ rowArray[catIndex].vidIndex);
+                
                 return true;
             }
         }
         if(dir=="right"){
             if(rowArray[catIndex].vidIndex + 1 < rowArray[catIndex].length){
                 rowArray[catIndex].vidIndex++;
-                console.log("After rowIndex "+ rowArray[catIndex].vidIndex);
+                
                 return true;
             }
         }
@@ -197,34 +244,50 @@ SceneManager.main = (function () {
         return false;
     }
     function createDestroy(idRow, dir){
+        var category = Data.list[idRow];
         if(dir=="left"){
-            var category = Data.list[idRow];
-            var iVid = rowArray[idRow].vidIndex -1;
-            if(iVid < 0){  
-                iVid  = rowArray[idRow].length-1;
+            
+            var destroyVid = rowArray[idRow].vidIndex + boxInView -2;
+            if( destroyVid < rowArray[idRow].length ){
+                var iVid = rowArray[idRow].vidIndex-1;
+                if(iVid < 0){
+                    iVid = -1000;
+                }
+                var newBox = createVideoBox(category.videos[iVid], idRow, iVid);
+                $("#row"+idRow).prepend(newBox);
+                $("#row"+idRow+"> div:last-child").remove(); 
+            }else{
+                
+                var iVid = rowArray[idRow].vidIndex-1;
+                if(iVid < 0){
+                    iVid = -1000;
+                }
+                var newBox = createVideoBox(category.videos[iVid], idRow, iVid);
+                $("#row"+idRow).prepend(newBox);
+                
             }
-            var newBox = createVideoBox(category.videos[iVid], idRow);
-            $("#row"+idRow).prepend(newBox);
-            $("#row"+idRow+"> div:last-child").remove();          
         }
 
         if(dir=="right"){
             $("#row"+idRow).find('div').first().remove();
             var category = Data.list[idRow];
-            var iVid = rowArray[idRow].vidIndex;
-            var newBox = createVideoBox(category.videos[iVid], idRow);
-            $("#row"+idRow).append(newBox);
-        }
+            var iVid = rowArray[idRow].vidIndex + boxInView - 2 ;
+            if(iVid  < rowArray[idRow].length){
+                var newBox = createVideoBox(category.videos[iVid] , idRow, iVid);
+                $("#row"+idRow).append(newBox);
+            }
 
+        }
     }
 
     function moveRowRight(index, animation){
         var movePixels;
+        
         if(animation){
             movePixels = "-=" + boxWidth + "px";
             $("#row"+index).animate({
                 left: movePixels 
-            },1000,function(){
+            },aniTIme,function(){
                 movePixels = -boxWidth ;
                 if(checkIfCreateDestroy(categoryIndex,"right")){
                     $("#row"+index).css("left", movePixels+"px");
@@ -232,7 +295,7 @@ SceneManager.main = (function () {
                 }
             });
         }else{
-            movePixels = -boxWidth * (rowArray[index].vidIndex + 1);
+            movePixels = -boxWidth ;
             $("#row"+index).css("left", movePixels+"px");
         }
     }
@@ -240,64 +303,165 @@ SceneManager.main = (function () {
 
     function moveRowLeft(index, animation){
         var movePixels;
-        console.log("moveleft")
+       
         if(animation){
-            movePixels = "+=" + boxWidth + "px";
-            $("#row"+index).animate({
-                left: movePixels 
-            },1000,function(){
-                movePixels = -boxWidth ;
-                if(checkIfCreateDestroy(categoryIndex),"left"){
-                    $("#row"+index).css("left", movePixels+"px");
-                    createDestroy(categoryIndex, "left");
+            
+            var destroyVid = rowArray[index].vidIndex + boxInView -1;
+            if( destroyVid < rowArray[index].length ){
+                movePixels = "+=" + boxWidth + "px";
+
+                $("#row"+index).animate({
+                    left: movePixels 
+                },aniTIme,function(){
+                    movePixels = -boxWidth ;
+                    if(checkIfCreateDestroy(categoryIndex),"left"){
+                        $("#row"+index).css("left", movePixels+"px");
+                        createDestroy(categoryIndex, "left");
+                    }
+                });
+            }else{
+                
+               movePixels = "+=" + boxWidth + "px";
+                if(rowArray[index].vidIndex == 0 ){
+                    //createDestroy(categoryIndex, "left");
+                    movePixels = -boxWidth + "px";
                 }
-            });
+                 $("#row"+index).animate({
+                    left: movePixels 
+                },aniTIme,function(){
+                   
+                });
+            }
+            
+            
         }else{
-            movePixels = boxWidth * (rowArray[index].vidIndex + 1);
+            movePixels = boxWidth ;
             $("#row"+index).css("left", movePixels+"px");
         }
     }
     function moveRowUp(index, animation){
-        categoryIndex--;
+        if(categoryIndex + 1 >= Data.list.length ){
+           
+            $("#rowCont").prepend( createRow( categoryIndex -1 ) );
+            moveRowRight(categoryIndex -1 , false);
+            $("#rowCont").animate({
+                top: 0 
+            },aniTIme,function(){  
+            });
+            categoryIndex--;
+        }else{
+            categoryIndex--;
+            $("#rowCont").prepend( createRow( categoryIndex ) );
+            $("#rowCont").css("top", "-"+rowHeight+"px");
+            moveRowRight(categoryIndex, false);
+            if(someFlag){
+                someFlag = false;
+                console.log("Especial case");
+                moveRowFix();
+            }
+            if(animation){
+                $("#rowCont").animate({
+                    top: 0 
+                },aniTIme,function(){
+                    //$("#rowCont").find('div').last().remove();
+                    $("#rowCont > div:last-child").remove();     
+                });
+            }else{
+
+            }
+        }
     }
 
     function moveRowDown(index, animation){
+        
         categoryIndex++;
+        if(categoryIndex + 1 < Data.list.length ){
+            $("#rowCont").append( createRow( categoryIndex + 1) );
+            moveRowRight(categoryIndex+ 1, false);
+
+        }
+        if(animation){
+            $("#rowCont").animate({
+                top: -rowHeight 
+            },aniTIme,function(){
+                $("#rowCont").find('div').first().remove();
+                $("#rowCont").css("top", "0px");
+            });
+        }else{
+        
+        }
     }
 
-
+    function moveRowFix(){
+         var movePixels = -boxWidth*(rowArray[categoryIndex].vidIndex+1) ;
+         $("#row"+categoryIndex).css("left", movePixels+"px");
+    }
     
-    function createRow(container, index ){
+    function createRow( index ){
         var category = Data.list[index];
+        
         var row = $("<div class='row' />");
         var rowHeader = $("<div class='rowHeader' />");
         var rowScrollCont = $("<div id='row"+ index +"' class='rowScrollCont'/>");
-        
+        var textRow = $("<span class='spanRowHead' />");
+        textRow.text(rowArray[index].title);
+        rowHeader.append(textRow);
+        //rowHeader.text(rowArray[index].title);
         row.append(rowHeader);
         //create the first row. 
-        var videoBox = createVideoBox(category.videos[category.videos.length-1], index);
-        rowScrollCont.append(videoBox);
-        
-        // create the rest
-        for(var i = 0 ; i < boxInView -1 && i < category.videos.length ; i++){
-            var videoBox = createVideoBox(category.videos[i], index);
-            rowScrollCont.append(videoBox);
-        }
+        someFlag = false;
+        if(boxInView < category.videos.length ){
+            var videoBox;
+            if( rowArray[index].vidIndex == 0 ){
+                videoBox = createVideoBox(category.videos[category.videos.length-1], index, category.videos.length-10000);
+            }else{
+                videoBox = createVideoBox(category.videos[rowArray[index].vidIndex - 1], index, rowArray[index].vidIndex-1);
+            }
 
+            rowScrollCont.append(videoBox);
+            // create the rest
+
+            for(var i = rowArray[index].vidIndex ; i < rowArray[index].vidIndex + (boxInView -1) && i < category.videos.length ; i++){
+
+                var videoBox = createVideoBox(category.videos[i], index, i);
+                rowScrollCont.append(videoBox);
+            }
+        }else{
+            var videoBox;
+            videoBox = createVideoBox(category.videos[category.videos.length-1], index, category.videos.length-10000);
+
+            rowScrollCont.append(videoBox);
+            for(var i = 0 ; i <  category.videos.length ; i++){
+                var videoBox = createVideoBox(category.videos[i], index, i);
+                rowScrollCont.append(videoBox);
+            }
+        
+            someFlag = true;
+            console.log("The category "+ rowArray[index].title );
+/*          for(var i = rowArray[index].vidIndex ; i < rowArray[index].vidIndex + (boxInView -1) && i < category.videos.length ; i++){
+
+                var videoBox = createVideoBox(category.videos[i], index, i);
+                rowScrollCont.append(videoBox);
+            }*/
+            
+        }
         row.append(rowScrollCont);
-        $("#"+container).append(row);
+        return row;
     }
     
-    function createVideoBox(video, catIndex){
-        var videoBoxCont = $("<div class='rowContentCont' />");
+    function createVideoBox(video, catIndex, vidIndex){
+        var videoBoxCont = $("<div id='cat"+catIndex+"vid"+vidIndex+"' class='rowContentCont' />");
         var videoBox = $("<div class='vidBox' />");
-        var vidImage = $("<div class='vidImage' />");
+        //var vidImage = $("<div class='vidImage' />");
+        var vidImage = $("<img class='vidImage' />");
         var vidInfoCont = $("<div class='vidInfoCont' />");
         var vidName = $("<div class='vidName' />");
         
         vidInfoCont.css("background-color", rowArray[catIndex].color);
-        vidName.html(video.name);
-        
+        if(vidIndex >= 0 ){ // negative values
+            vidName.html(video.name);
+            vidImage.attr('src', video.thumbnail );
+        }
         vidInfoCont.append(vidName);
         
         videoBox.append(vidImage);
@@ -308,12 +472,18 @@ SceneManager.main = (function () {
         return videoBoxCont;
     }
 
+function addSelectedTo(catind){
+    $(".selectedVid").removeClass("selectedVid");
+    var vidInd = rowArray[catind].vidIndex;
+    $("#cat"+catind+"vid"+vidInd).addClass("selectedVid");
+}
+
     function getColor(index){
         var i = index % 12;
-        var color = ['#FFEBEE','#FCE4EC','#F3E5F5',
-                     '#EDE7F6','#E8EAF6','#E3F2FD',
-                     '#E1F5FE','#E0F7FA','#E0F2F1',
-                     '#E8F5E9','#F1F8E9', '#F9FBE7'];
+        var color = ['#E57373','#F48FB1','#CE93D8',
+                     '#B39DDB','#9FA8DA','#42A5F5',
+                     '#03A9F4','#00ACC1','#26A69A',
+                     '#4CAF50','#7CB342', '#9E9D24'];
         return color[i];
     }
     

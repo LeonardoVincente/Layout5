@@ -17,10 +17,10 @@ body{
 
 .videoContentCont{
     width: 100%;
-    height: 95%;
+    height: 80%;
     background-color: none;
     position: relative;
-    top: 5%;
+    top: 20%;
     /*left: 5%;*/
     overflow: hidden;
     
@@ -35,27 +35,27 @@ body{
 
 .row{
     width: 100%;
-    height: 200px;
+    height: 275px;
     background-color: none;
     overflow: hidden;
 }
 
 .rowHeader{
     width: 100%;
-    height: 30%;
+    height: 25%;
     background-color: none;
     display: table;
 
 }
 .rowScrollCont{
     width: 250%;
-    height: 70%;
+    height: 75%;
     position: relative;
     background-color: none;
 }
 .rowContentCont{
     width: 270px;
-    height: 135px;
+    height: 100%;
     background-color:none;
     float: left;
     position: relative;
@@ -68,18 +68,21 @@ body{
 
 .vidBox{
     width: 200px;
-    height: 125px;
-    background-color: gray;
+    height: 95%;
+    background-color: #9E9E9E;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 3px;
+    /* margin-top: 3px; */
+    border: solid 4px #9E9E9E;
+    overflow:hidden;
 }
 
 .vidImage{
    
     /*height: 120px;*/
-    width: 150px;
+    width: 200px;
     background-color:none;
+    vertical-align: middle;
 }
 
 .vidInfoCont{
@@ -88,17 +91,23 @@ body{
 }
 
 .vidName{
-    font-size: 0.8em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     font-size: 1em;
+    padding: 5px;
+    font-family: "Verdana", Times, serif;
+/*     overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+font-size: 1em; */
 }
 
 
 .selectedVid > div{
-    border: solid 2px red;
+    border: solid 4px #00838F;
     margin-top: 2px;
+}
+
+.selectedVid > div > .vidInfoCont {
+    background-color: #00838F!important;
 }
 
 .spanRowHead{
@@ -107,4 +116,16 @@ body{
     padding-left: 35px;
     font-size: 1.4em;
     color: white;
+}
+
+
+.selectedVid  > div > .iconHolder{
+    width: 100px;
+    height: 100px;
+    background: none;
+    position: absolute;
+    top: 15%;
+    left: 32%;
+    background-image: url("appimgs/play2.png");
+    background-size: 100px 100px;
 }

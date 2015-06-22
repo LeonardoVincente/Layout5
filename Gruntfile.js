@@ -10,7 +10,8 @@ grunt.initConfig({
 express: {
     all: {
         options: {
-            bases: ['C:\\Users\\leo\\Documents\\GitHub\\Layout5'],
+            //bases: ['C:\\Users\\leo\\Documents\\GitHub\\Layout5'],
+            bases: ['C:\\Users\\leonzky\\Desktop\\carry\\Layout5'],
             port: 8080,
             hostname: "0.0.0.0",
             livereload: true

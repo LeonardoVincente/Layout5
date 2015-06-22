@@ -396,7 +396,15 @@ function checkIfMoveCat(catInd ,dir){
          var movePixels = -boxWidth*(rowArray[categoryIndex].vidIndex+1) ;
          $("#row"+categoryIndex).css("left", movePixels+"px");
     }
-    
+    function getShortText(title, length){
+        var res = title;
+        if(typeof title === 'undefined' || !title  || title == ""){
+            res = "NO TEXT";
+        }else if(title.length > length){
+            res = title.substring(0, length) + "...";
+        }
+        return res;
+    }
     function createRow( index ){
         var category = Data.list[index];
         
@@ -404,7 +412,8 @@ function checkIfMoveCat(catInd ,dir){
         var rowHeader = $("<div class='rowHeader' />");
         var rowScrollCont = $("<div id='row"+ index +"' class='rowScrollCont'/>");
         var textRow = $("<span class='spanRowHead' />");
-        textRow.text(rowArray[index].title);
+        var title = getShortText(rowArray[index].title , 40);
+        textRow.text(title);
         rowHeader.append(textRow);
         //rowHeader.text(rowArray[index].title);
         row.append(rowHeader);
@@ -437,7 +446,6 @@ function checkIfMoveCat(catInd ,dir){
             }
         
             someFlag = true;
-            console.log("The category "+ rowArray[index].title );
 /*          for(var i = rowArray[index].vidIndex ; i < rowArray[index].vidIndex + (boxInView -1) && i < category.videos.length ; i++){
 
                 var videoBox = createVideoBox(category.videos[i], index, i);
@@ -454,17 +462,20 @@ function checkIfMoveCat(catInd ,dir){
         var videoBox = $("<div class='vidBox' />");
         //var vidImage = $("<div class='vidImage' />");
         var vidImage = $("<img class='vidImage' />");
+        var iconHolder = $("<div class='iconHolder' />")
         var vidInfoCont = $("<div class='vidInfoCont' />");
         var vidName = $("<div class='vidName' />");
-        
-        vidInfoCont.css("background-color", rowArray[catIndex].color);
+        vidName.css("border-top", "solid 3px " + rowArray[catIndex].color)
+        //vidInfoCont.css("background-color", rowArray[catIndex].color);
+        vidInfoCont.css("background-color", "#9E9E9E");
         if(vidIndex >= 0 ){ // negative values
-            vidName.html(video.name);
+            vidName.html(getShortText(video.name,42));
             vidImage.attr('src', video.thumbnail );
         }
         vidInfoCont.append(vidName);
         
         videoBox.append(vidImage);
+        videoBox.append(iconHolder);
         videoBox.append(vidInfoCont);
         
         videoBoxCont.append(videoBox);

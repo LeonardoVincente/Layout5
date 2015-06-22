@@ -176,6 +176,7 @@ SceneManager.main = (function () {
         $("#Scenemain").addClass("selectedBackground");
         $("#mainLogo").css('background', 'url(' + Data.logo + ') no-repeat');
         $("#mainLogo").addClass("selectedLogo");
+        $("#mainLogo").css('background-size', '100px');
     }
     
     

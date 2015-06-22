@@ -129,3 +129,19 @@ font-size: 1em; */
     background-image: url("appimgs/play2.png");
     background-size: 100px 100px;
 }
+
+
+#mainLogo{
+    width: 100px;
+    height: 100px;
+    z-index: 100;
+    position: absolute;
+    top: 40px;
+    left: 820px;
+    background-color: red;
+}
+
+.selectedLogo{
+    background-size: 100px 100px;
+    display: block;
+}
